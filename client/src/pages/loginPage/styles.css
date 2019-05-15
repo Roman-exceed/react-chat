@@ -1,0 +1,11 @@
+.login-outer-block {
+    display: flex;
+    justify-content: center;
+}
+
+
+.login-inner-block {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+}
