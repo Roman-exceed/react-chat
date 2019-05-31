@@ -1,9 +1,10 @@
-import React, { Component, createRef, Fragment } from 'react';
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import { Redirect } from "react-router-dom";
-import { withRouter } from "react-router";
+import React, { Component, createRef } from 'react';
+import { Redirect, withRouter } from 'react-router';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { TextField, Button } from '@material-ui/core';
 
+import { enterUsername } from './actions';
 import './styles.css';
 
 class LoginPage extends Component {
@@ -11,16 +12,24 @@ class LoginPage extends Component {
   passwordInput = createRef();
 
   login = () => {
-    console.log('--------this.usernameInput', this.usernameInput.current.value);
-    console.log('--------this.usernameInput', this.passwordInput.current.value);
-    console.log('--------this.props', this.props);
-    // if (redirect) {
-    this.props.history.push('/');
-    // return <Redirect to="/"/>;
-    // }
+    console.log('-------LOGIN');
+
+    const { enterUsername } = this.props.actions;
+    if (this.usernameInput.current.value.trim()) {
+      enterUsername({
+        username: this.usernameInput.current.value.trim(),
+        password: this.passwordInput.current.value.trim(),
+      });
+    }
   };
 
   render() {
+    const { redirect } = this.props;
+
+    if (redirect) {
+      return <Redirect to="/"/>;
+    }
+
     return (
       <div className="login-outer-block">
         <div className="login-inner-block">
@@ -57,5 +66,24 @@ class LoginPage extends Component {
   }
 }
 
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(
+      {
+        enterUsername,
+      },
+      dispatch
+    )
+  };
+};
 
-export default withRouter(LoginPage);
+const mapStateToProps = state => {
+  return {
+    redirect: state.userInfo.redirect
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(LoginPage));
